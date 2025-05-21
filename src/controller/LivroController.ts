@@ -1,5 +1,7 @@
 import { Livro } from "../model/Livro";
 import { Request, Response} from "express";
+import path = require("path");
+import fs from 'fs';
 
 /**
  * Interface LivroDTO
@@ -48,11 +50,11 @@ class LivroController extends Livro {
     static async cadastrar(req: Request, res: Response) {
         try {
             const dadosRecebidos: LivroDTO = req.body;
-            
+
             // Instanciando objeto Livro
             const novoLivro = new Livro(
                 dadosRecebidos.titulo,
-                dadosRecebidos.autor, 
+                dadosRecebidos.autor,
                 dadosRecebidos.editora,
                 (dadosRecebidos.anoPublicacao ?? 0).toString(),
                 dadosRecebidos.isbn ?? '',
@@ -65,15 +67,25 @@ class LivroController extends Livro {
             // Chama o método para persistir o livro no banco de dados
             const result = await Livro.cadastrarLivro(novoLivro);
 
-            // Verifica se a query foi executada com sucesso
-            if (result) {
-                return res.status(200).json(`Livro cadastrado com sucesso`);
+            // Verifica se o cadastro foi bem-sucedido
+            if (result.queryResult && result.idLivro) {
+                novoLivro.setIdLivro(result.idLivro);
+
+                if (req.file) {
+                    const nomeGerado = path.basename(req.file.filename); // nome gerado automaticamente com extensão
+                    await Livro.atualizarImagemCapa(nomeGerado, novoLivro.getIdLivro());
+                }
+                
+                // Retorno de sucesso com o ID do livro
+                return res.status(200).json({mensagem: 'Livro cadastrado com sucesso'});
             } else {
-                return res.status(400).json('Não foi possível cadastrar o livro no banco de dados');
+                return res.status(400).json({mensagem: 'Não foi possível cadastrar o livro no banco de dados'});
             }
         } catch (error) {
-            console.log(`Erro ao cadastrar o livro: ${error}`);
-            return res.status(400).json('Erro ao cadastrar o livro');
+            console.error(`Erro ao cadastrar o livro: ${error}`);
+            return res.status(500).json({
+                mensagem: 'Erro ao cadastrar o livro'
+            });
         }
     }
 
@@ -143,5 +155,3 @@ class LivroController extends Livro {
 }
 
 export default LivroController;
-
-

@@ -10,7 +10,7 @@ interface AlunoDTO {
     sobrenome: string;
     dataNascimento?: Date;
     endereco?: string;
-    email: string;
+    email?: string;
     celular: string;
 }
 
@@ -121,8 +121,10 @@ class AlunoController extends Aluno {
             // Define o ID do aluno, que deve ser passado na query string
             aluno.setIdAluno(parseInt(req.query.idAluno as string));
 
+            console.log(dadosRecebidos);
+
             // Chama o método para atualizar o cadastro do aluno no banco de dados
-            if (await Aluno.atualizarAluno(aluno)) {
+            if (await Aluno.atualizarCadastroAluno(aluno)) {
                 return res.status(200).json({ mensagem: "Cadastro atualizado com sucesso!" });
             } else {
                 return res.status(400).json('Não foi possível atualizar o aluno no banco de dados');

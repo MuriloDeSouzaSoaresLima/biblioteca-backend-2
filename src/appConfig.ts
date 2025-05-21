@@ -1,6 +1,6 @@
 const SERVER_ROUTES = {
     LOGIN: '/login',
-
+    
     NOVO_ALUNO: '/novo/aluno',
     ATUALIZAR_ALUNO: '/atualiza/aluno',
     REMOVER_ALUNO: '/remove/aluno',
@@ -14,7 +14,10 @@ const SERVER_ROUTES = {
     NOVO_EMPRESTIMO: '/novo/emprestimo',
     ATUALIZAR_EMPRESTIMO: '/atualiza/emprestimo',
     LISTAR_EMPRESTIMOS: '/lista/emprestimos',
-    REMOVER_EMPRESTIMO: '/remove/emprestimo'
+    REMOVER_EMPRESTIMO: 'remover/emprestimo',
+
+    LISTAR_USUARIO: '/lista/usuario',
+    NOVO_USUARIO: '/novo/usuario'
 }
 
 export { SERVER_ROUTES }
